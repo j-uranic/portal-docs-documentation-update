@@ -1,5 +1,5 @@
 ---
-#data/directory-schemas/spatialseq_v1.yaml
+#data/directory-schema_spatialseq_v1.yaml
 
 fastq.gz
   file:"*.fastq.gz"
