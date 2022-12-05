@@ -1,0 +1,16 @@
+---
+#data/table-schemas/spatialseq_v1.yaml
+
+Visium Assay Type
+  field:"Visium Assay Type"
+  required:"yes"
+  data_type:"categorical"
+  description:>
+    "There are currently two assay types, \“Visium\” and \“Visium FFPE\”.  To avoid confusion, especially with future 10x Genomics products, the first assay version using 3’ polyA capture on fresh frozen tissue will be referred to as \“Visium Fresh Frozen\”"
+
+Visium Chemistry Version
+  field:"Visium Chemistry Version"
+  required:"yes"
+  data_type:"categorical"
+  description:>
+    "Corresponding chemistry version to accommodate future releases of Fresh Frozen and FFPE capture chemistry."
