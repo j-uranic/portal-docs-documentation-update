@@ -109,16 +109,11 @@ Files and Directories
 
 -   *THE FOLLOWING TABLE IS AN EXAMPLE AND SHOULD BE EDITED AS APPROPRIATE.*
 
-#Create an include to pull .yaml file data into the table template. Pass the parameters items, file, and caption
 {% include spatial_seq.md items="fastq.gz, tiff" file="directory-schema_spatialseq_v1.yaml" caption="Directory Structure" %}
-
-#Populate the template with the table data (using Liquid)
 {% assign tableItems = include.items | split: ", " %}
 {% assign tableFileParam = {{include.file}} %}
 {% assign tableFile = site.data[tableFileParam] %}
 
-#Include html for table layout, begin and end with three backticks
-```
 <table class="grid" style="width: 100%">
     <caption>{{include.caption}}</caption>
     <colgroup>
@@ -145,9 +140,6 @@ Files and Directories
     {% endfor %}
     </tbody>
 </table>
-
-```
-#End of table
 
 Note:
 
@@ -177,16 +169,11 @@ Metadata
 
 -   *THE FOLLOWING TABLE IS AN EXAMPLE AND SHOULD BE EDITED AS APPROPRIATE.*
 
-#Create an include to pull .yaml file data into the table template. Pass the parameters items, file, and caption
 {% include spatial_seq.md items="Visium Assay Type, Visium Chemistry Version" file="table-schema_spatialseq_v1.yaml" caption="Metadata Structure" %}
-
-#Populate the template with the table data (using Liquid)
 {% assign tableItems = include.items | split: ", " %}
 {% assign tableFileParam = {{include.file}} %}
 {% assign tableFile = site.data[tableFileParam] %}
 
-#Include html for table layout, begin and end with three backticks
-```
 <table class="grid" style="width: 100%">
     <caption>{{include.caption}}</caption>
     <colgroup>
@@ -213,9 +200,6 @@ Metadata
     {% endfor %}
     </tbody>
 </table>
-
-```
-#End of table
 
 ### Assay-level categorical field values
 
