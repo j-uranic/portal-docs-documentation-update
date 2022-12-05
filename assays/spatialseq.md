@@ -109,7 +109,45 @@ Files and Directories
 
 -   *THE FOLLOWING TABLE IS AN EXAMPLE AND SHOULD BE EDITED AS APPROPRIATE.*
 
-#include: /hubmapconsortium/ingest-validation-tools/blob/j-uranic/new-assay-documentation/src/ingest_validation_tools/directory-schemas/seqspatial-v1.yaml
+#Create an include to pull .yaml file data into the table template. Pass the parameters items, file, and caption
+{% include spatial_seq.md items="fastq.gz, tiff" file="directory-schema_spatialseq_v1.yaml" caption="Directory Structure" %}
+
+#Populate the template with the table data (using Liquid)
+{% assign tableItems = include.items | split: ", " %}
+{% assign tableFileParam = {{include.file}} %}
+{% assign tableFile = site.data[tableFileParam] %}
+
+#Include html for table layout, begin and end with three backticks
+```
+<table class="grid" style="width: 100%">
+    <caption>{{include.caption}}</caption>
+    <colgroup>
+        <col width="20%" />
+        <col width="65%" />
+        <col width="15%" />
+    </colgroup>
+    <thead>
+        <tr class="header">
+            <th>Field</th>
+            <th>Description</th>
+            <th>Data Type</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entry in tableItems %}
+        <tr>
+          <td>{{ tableFile[entry].field }}<br/>
+          {% if tableFile[entry].required == true %}<span class="tableRequired">required</span>{% endif %}</td>
+          <td>{{tableFile[entry]description}}
+          {% if tableFile[entry].values != empty %}{{ tableFile[entry].values }}{% endif %}</td>
+          <td>{{ tableFile[entry].type }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+```
+#End of table
 
 Note:
 
@@ -139,56 +177,45 @@ Metadata
 
 -   *THE FOLLOWING TABLE IS AN EXAMPLE AND SHOULD BE EDITED AS APPROPRIATE.*
 
-| **Field**                                  | **Required?** | **Data type**                    | **Description**                                                                                                                                                                                                                                                                      |
-|--------------------------------------------|---------------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Visium Assay Type                          | yes           | categorical                      | There are currently two assay types, "Visium" and "Visium FFPE". To avoid confusion, especially with future 10x Genomics products, the first assay version using 3' polyA capture on fresh frozen tissue will be referred to as "Visium Fresh Frozen"                                |
-| Visium Chemistry Version                   | yes           | categorical                      | Corresponding chemistry version to accommodate future releases of Fresh Frozen and FFPE capture chemistry.                                                                                                                                                                           |
-| Visium Slide Serial Number                 | yes           | alphanumeric                     | Serial number of the Visium Gene Expression Slide utilized. This serial number is used to pull a GPR file that stores the locations of the capture area fiducials and spatial barcodes, specific to each slide.                                                                      |
-| Visium Probe Set URI                       | no            | filepath                         | Link to the probe set utilized for the FFPE version of assay                                                                                                                                                                                                                         |
-| Visium permeabilization time value         | yes           | int                              | Time used for tissue permeabilization during RNA extraction from tissue in Step 1.1 of the Visium protocol.                                                                                                                                                                          |
-| Visium permeabilization time unit          | yes           | categorical                      | Unit of measure for "Visium permeabilization time value".                                                                                                                                                                                                                            |
-| Visium Staining Type                       | yes           | categorical                      | Staining used on the accompanying Visium slide for acquisition of tissue morphology information. Standard is hematoxylin and eosin stain (H&E) for basic morphology information imaged in bright-field, but fluorescent probes might be used for mRNA or protein level measurements. |
-| Visium Staining Protocol                   | yes           | hyperlink                        | Link to the protocol detailing the staining procedure                                                                                                                                                                                                                                |
-| Visium Imaging Used Coverslip              | yes           | boolean                          | Was a coverslip used during the image acquisition                                                                                                                                                                                                                                    |
-| Visium Image Resolution                    | yes           | float                            | Resolution of the capture area image (measured in microns per pixel (mpp))                                                                                                                                                                                                           |
-| Visium Image Is Serial Section             | yes           | boolean                          | Is the high resolution image taken on a serial section? This will be important when usage of the CytAssist or other tissue transfer protocols are developed.                                                                                                                         |
-| Visium Image Acquisition Instrument Vendor | yes           | alphanumeric                     | An acquisition instrument is the device that contains the signal detection hardware and signal processing software. Assays generate signals such as light of various intensities or color or signals representing the molecular mass.                                                |
-| Visium Image Acquisition Instrument Model  | yes           | alphanumeric                     | Manufacturers of an acquisition instrument may offer various versions (models) of that instrument with different features or sensitivities. Differences in features or sensitivities may be relevant to processing or interpretation of the data.                                    |
-| Visium Image Fluor Channel 1 probe         | no            | alphanumeric                     | The affinity reagent conjugated to a fluorophore used for fluorescence staining and imaging.                                                                                                                                                                                         |
-| Visium Image Fluor Channel 1 wavelength    | no            | int                              | The wavelength (in nm) corresponding to the associated fluorophore.                                                                                                                                                                                                                  |
-| Visium Image Fluor Channel 2 probe         | no            | alphanumeric                     | The affinity reagent conjugated to a fluorophore used for fluorescence staining and imaging.                                                                                                                                                                                         |
-| Visium Image Fluor Channel 2 wavelength    | no            | int                              | The wavelength (in nm) corresponding to the associated fluorophore.                                                                                                                                                                                                                  |
-| Visium Image Fluor Channel 3 probe         | no            | alphanumeric                     | The affinity reagent conjugated to a fluorophore used for fluorescence staining and imaging.                                                                                                                                                                                         |
-| Visium Image Fluor Channel 3 wavelength    | no            | int                              | The wavelength (in nm) corresponding to the associated fluorophore.                                                                                                                                                                                                                  |
-| Visium Image Fluor Channel 4 probe         | no            | alphanumeric                     | The affinity reagent conjugated to a fluorophore used for fluorescence staining and imaging.                                                                                                                                                                                         |
-| Visium Image Fluor Channel 4 wavelength    | no            | int                              | The wavelength (in nm) corresponding to the associated fluorophore.                                                                                                                                                                                                                  |
-| Library ID                                 | yes           | alphanumeric                     | A library ID, unique within a TMC.                                                                                                                                                                                                                                                   |
-| Capture Area ID                            | yes           | categorical                      | Visium capture area identifier                                                                                                                                                                                                                                                       |
-| Mapping Area                               | yes           | float                            | Total size of mapping area (um\*um)                                                                                                                                                                                                                                                  |
-| Spot Size (x)                              | yes           | int                              | Spot horizontal length (um)                                                                                                                                                                                                                                                          |
-| Spot Size (y)                              | yes           | int                              | Spot vertical length (um)                                                                                                                                                                                                                                                            |
-| Spot Geometry                              | yes           | categorical                      | Geometric shape of each spot                                                                                                                                                                                                                                                         |
-| Number of Spots                            | yes           | int                              | Total number of spots in the mapping area                                                                                                                                                                                                                                            |
-| Spot Spacing (x)                           | yes           | int                              | Center-to-center inter-spot space horizontally                                                                                                                                                                                                                                       |
-| Spot Spacing (y)                           | yes           | int                              | Center-to-center inter-spot space vertically                                                                                                                                                                                                                                         |
-| Fraction Spots Covered                     | yes           | float                            | Approximate number of spots in the mapping area covered by tissue                                                                                                                                                                                                                    |
-| Spot Barcode Read                          | yes           | categorical                      | Sequencing read in which the 10x Genomics spatial barcode resides                                                                                                                                                                                                                    |
-| Spot Barcode Offset                        | yes           | int                              | Number of base pairs (bp) from the start of the read where the spatial barcode is located                                                                                                                                                                                            |
-| Spot Barcode Size                          | yes           | int                              | Length of the 10x Genomics spatial barcode                                                                                                                                                                                                                                           |
-| cDNA Amplification PCR cycles              | yes           | int                              | Refers to the number of PCR cycles in the amplification step; this varies according to the target number cells captured                                                                                                                                                              |
-| Visium Library Index Set                   | yes           | Pattern \^DI-TS-\[A-H\]\\d{1,2}  | The specific 10x Genomics provided index set used for sequencing multiplexing.                                                                                                                                                                                                       |
-| Library Construction Protocol              | yes           | hyperlink                        | A link to the protocol document containing the library construction method (including version) that was used.                                                                                                                                                                        |
-| Library Sequence Adapter                   | yes           | Pattern \[ATCG\]+(\\+\[ATCG\]+)? | Adapter sequence to be used for adapter trimming.                                                                                                                                                                                                                                    |
-| Library Average Fragment Size              | yes           | int                              | Average size in basepairs (bp) of sequencing library fragments estimated via gel electrophoresis or bioanalyzer/tapestation.                                                                                                                                                         |
-| Library Final Yield value                  | yes           | float                            | Total number of ng of library after final pcr amplification step. This is the concentration (ng/ul) \* volume (ul)                                                                                                                                                                   |
-| Library Final Yield unit                   | yes           | category                         | Units of final library yield. Leave blank if not applicable.                                                                                                                                                                                                                         |
-| Library PCR Cycles                         | yes           | int                              | Number of PCR cycles determined for the cDNA amplification step; this usually is determined via qPCR.                                                                                                                                                                                |
-| Library PCR Cycles For Sample Index        | yes           | int                              | Number of PCR cycles performed for library indexing.                                                                                                                                                                                                                                 |
-| Is Technical Replicate                     | yes           | boolean                          | Is the sequencing reaction run in replicate                                                                                                                                                                                                                                          |
-| Sequencing PhiX Amount                     | yes           | float                            | Percent PhiX loaded to the run.                                                                                                                                                                                                                                                      |
-| Sequencing read format                     | yes           | Pattern \\d+(/\\d+)+             | Slash-delimited list of the number of sequencing cycles for, for example, Read1, i7 index, i5 index, and Read2. Example: 12/34/56.                                                                                                                                                   |
-| Sequencing read Q30                        | yes           | int                              | Q30 is the weighted average of all the reads (e.g. \# bases UMI \* q30 UMI + \# bases R2 \* q30 R2 + ...)                                                                                                                                                                            |
-| Sequencing Reagent Kit                     | yes           | alphanumeric                     | Reagent kit used for sequencing.                                                                                                                                                                                                                                                     |
+#Create an include to pull .yaml file data into the table template. Pass the parameters items, file, and caption
+{% include spatial_seq.md items="Visium Assay Type, Visium Chemistry Version" file="table-schema_spatialseq_v1.yaml" caption="Metadata Structure" %}
+
+#Populate the template with the table data (using Liquid)
+{% assign tableItems = include.items | split: ", " %}
+{% assign tableFileParam = {{include.file}} %}
+{% assign tableFile = site.data[tableFileParam] %}
+
+#Include html for table layout, begin and end with three backticks
+```
+<table class="grid" style="width: 100%">
+    <caption>{{include.caption}}</caption>
+    <colgroup>
+        <col width="20%" />
+        <col width="65%" />
+        <col width="15%" />
+    </colgroup>
+    <thead>
+        <tr class="header">
+            <th>Field</th>
+            <th>Description</th>
+            <th>Data Type</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entry in tableItems %}
+        <tr>
+          <td>{{ tableFile[entry].field }}<br/>
+          {% if tableFile[entry].required == true %}<span class="tableRequired">required</span>{% endif %}</td>
+          <td>{{tableFile[entry]description}}
+          {% if tableFile[entry].values != empty %}{{ tableFile[entry].values }}{% endif %}</td>
+          <td>{{ tableFile[entry].type }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+```
+#End of table
 
 ### Assay-level categorical field values
 
